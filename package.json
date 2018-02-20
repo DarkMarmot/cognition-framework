@@ -1,6 +1,6 @@
 {
   "name": "cognition-js",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "self-assembling client-side web framework",
   "main": "machine.js",
   "scripts": {
