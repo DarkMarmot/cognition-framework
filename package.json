@@ -1,0 +1,46 @@
+{
+  "name": "cognition-js",
+  "version": "3.0.0",
+  "description": "self-assembling client-side web framework",
+  "main": "machine.js",
+  "scripts": {
+    "test": "rollup -c rollup.config.umd.js && cp ./dist/* ./public/js",
+    "test2": "rollup -c rollup.config.umd.js && cp ./dist/* ./public/js && mocha",
+    "start": "node server.js"
+  },
+  "author": "Scott Southworth <scott.southworth@gmail.com> (https://twitter.com/DarkMarmot)",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "babel-plugin-external-helpers": "^6.22.0",
+    "babel-preset-latest": "^6.24.0",
+    "node-static": "^0.7.9",
+    "rollup": "^0.41.6",
+    "rollup-plugin-babel": "^2.7.1",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-plugin-uglify": "^1.0.2",
+    "rollup-watch": "^3.2.2",
+    "sinon": "^2.1.0",
+    "finalhandler": "^1.0.3",
+    "serve-static": "^1.12.3"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DarkMarmot/machine.git"
+  },
+  "keywords": [
+    "self-assembling",
+    "code-splitting",
+    "client-side",
+    "framework"
+  ],
+  "bugs": {
+    "url": "https://github.com/DarkMarmot/machine/issues"
+  },
+  "homepage": "https://github.com/DarkMarmot/machine#readme"
+}
