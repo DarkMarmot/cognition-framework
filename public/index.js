@@ -1,10 +1,6 @@
 
 Machine.cog({
 
-    mount: function(){
-console.log('index mount');
-    },
-
 
     display:
 
@@ -47,7 +43,7 @@ console.log('index mount');
 
     states: {
 
-        _authResponse: 'cat',
+        _authResponse: '~ cat',
         _anchor: function(){ return { label: 'Kitten Happy!'}},
         _progress: function(){ return { valueFrom: '_animalPct'}},
 
@@ -84,8 +80,8 @@ console.log('index mount');
                     {label: 'car', value: 'b', icon: 'fa fa-space-shuttle'}
                 ])
                 ,
-                clickTo: 'animal',
-                activeFrom: 'animal',
+                clickTo: '~ animal',
+                activeFrom: '~ animal',
                 classes: {'is-right': true, 'is-toggle': true, 'is-boxed': true, 'is-large': true},
 
             }
@@ -93,8 +89,8 @@ console.log('index mount');
 
         _gridConfig: function(){ return {
 
-                records: '_animals',
-                columns: '_gridColumns'
+                records: '~ _animals',
+                columns: '~ _gridColumns'
 
             }
         },
@@ -114,7 +110,7 @@ console.log('index mount');
     },
 
     traits: [
-        {url: 'TRAIT fetch.js', api: 'AUTH_API', response$: 'authResponse$', auto: true}
+        {url: 'TRAIT fetch.js', api: 'AUTH_API', response$: '~ authResponse$', auto: true}
     ],
 
     buses: [
@@ -152,19 +148,20 @@ console.log('index mount');
         //     url: 'BULMA tabs2.js',
         //     config: '_menuConfig'
         // },
+        //
+        // grid: {
+        //
+        //     url: 'REM grid.js',
+        //     config: '_gridConfig'
+        //
+        // },
 
-        grid: {
-
-            url: 'REM grid.js',
-            config: '_gridConfig'
-
-        },
         selectable: {
             url: 'BULMA tabs.js',
             renderer: 'BULMA_ITEMS icon_label.js',
-            items: '_animals',
-            clickTo: 'animal',
-            activeFrom: 'animal',
+            items: '~ _animals',
+
+            activeFrom: '~ animal',
             classes: 'is-large',
             // config: 'meow'
         },

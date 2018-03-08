@@ -1465,6 +1465,7 @@ const phraseCmds = {
     '{': {name: 'WATCH_EACH', react: true, process: false, output: false, can_maybe: true, can_alias: true, can_prop: true},
     '~': {name: 'WATCH_SOME', react: true, process: false, output: false, can_maybe: true, can_alias: true, can_prop: true}
 
+    // ~ is now just data wire indicator --  not meow, use ? after last word for optional watch
 };
 
 const wordModifiers = {
@@ -1735,7 +1736,8 @@ function runPhrase(bus, phrase){
 
 }
 
-// todo throw errors
+// todo throw errors, could make hash by word string of parse functions for performance
+
 function extractProperties(word, value){
 
     let maybe = word.maybe;
@@ -1744,7 +1746,7 @@ function extractProperties(word, value){
     for(let i = 0; i < args.length; i++){
         const arg = args[i];
         if(!value && maybe)
-            return value;
+            return value; // todo filter somewhere else, todo throw err on !maybe
         value = value[arg.name];
         maybe = arg.maybe;
     }
@@ -1753,12 +1755,26 @@ function extractProperties(word, value){
 
 }
 
+function isWordNeeded(word){
+
+    const {maybe, args} = word;
+
+    if(args.length === 0)
+        return !maybe; // one word only -- thus needed if not maybe
+
+    const lastArg = args[args.length - 1];
+    return !lastArg.maybe;
+
+
+}
+
 function toAliasList(words){
 
     const list = [];
     for(let i = 0; i < words.length; i++) {
         const word = words[i];
-        list.push(word.alias);
+        if(isWordNeeded(word))
+            list.push(word.alias);
     }
     return list;
 
@@ -3253,6 +3269,33 @@ function getMsgSideEffect(sideEffectFunc){
 }
 
 
+function toChangeHash(msg){
+
+    const hash = {};
+    if(msg.length === 2){
+        hash[msg[0]] = false;
+        hash[msg[1]] = true;
+    } else {
+        hash[msg[0]] = true;
+    }
+    return hash;
+
+}
+
+function toClass(bus){
+
+
+    bus
+        .last(2)
+        .msg(toChangeHash)
+    ;
+
+    getMsgSideEffect(classes)(bus);
+
+
+}
+
+
 function domHooks(target){ // target is Catbus
 
     target.hook('TEXT', getMsgSideEffect(text));
@@ -3263,6 +3306,7 @@ function domHooks(target){ // target is Catbus
     target.hook('ATTRS', getMsgSideEffect(attrs));
     target.hook('PROPS', getMsgSideEffect(props));
     target.hook('STYLES', getMsgSideEffect(styles));
+    target.hook('TO_CLASS', toClass);
 
 }
 
@@ -3283,6 +3327,29 @@ function log(bus, args){
 function logHooks(target){ // target is Catbus
 
     target.hook('LOG', log);
+
+}
+
+function priorValue(bus){
+
+    function greaterThanOne(msg){
+        return msg.length > 1;
+    }
+
+    function getFirst(msg){
+        return msg[0];
+    }
+
+    bus
+        .last(2)
+        .filter(greaterThanOne).msg(getFirst);
+
+}
+
+
+function historyHooks(target){ // target is Catbus
+
+    target.hook('PRIOR', priorValue);
 
 }
 
@@ -3418,6 +3485,7 @@ Catbus.flush = function(){
 filterHooks(Catbus);
 domHooks(Catbus);
 logHooks(Catbus);
+historyHooks(Catbus);
 
 const pool = [];
 
@@ -3451,7 +3519,6 @@ Placeholder.give = function(el){
 
 function Relay(cog, name, remote){
 
-
     this.cog = cog;
     this.name = name;
     this.remote = remote;
@@ -3478,7 +3545,16 @@ Relay.prototype.connect = function(remoteName){
 
     if (typeof remoteName === 'function' && !this.isAction){
         this.localData.write(remoteName.call(this.cog.script));
+        // todo -- support {value: blah} syntax
     } else if (typeof remoteName === 'string'){
+
+        const tildaPos = remoteName.indexOf('~');
+        if(tildaPos >= 0){
+            remoteName = remoteName.substr(tildaPos + 1);
+            remoteName = remoteName.trim();
+        } else {
+            console.log('RELAY NO ~', remoteName);
+        }
 
         // remoteName must be data name at parent scope!
         const remoteData = this.cog.parent.scope.find(remoteName, true);
@@ -3815,6 +3891,18 @@ Gear.prototype.createCog = function createCog(msg){
 
     const children = this.children;
     const aliasContext = this.aliasContext;
+
+    if(!msg){
+        if(children.length){
+            const oldCog = children[0];
+            const el = oldCog.getFirstElement(); //oldCog.elements[0]; // todo recurse first element for virtual cog
+            const slot = Placeholder.take();
+            el.parentNode.insertBefore(slot, el);
+            oldCog.destroy();
+        }
+        return;
+    }
+
     const url = aliasContext.resolveUrl(msg, this.root);
 
     if(children.length){

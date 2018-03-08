@@ -1,9 +1,11 @@
 
 Machine.cog({
 
-    display: '<div name="tabs" class="tabs"><ul>' +
-        '<slot name="list"></slot>' +
-    '</ul></div>',
+    display: `
+        <div name="tabs" class="tabs"><ul>
+            <slot name="list"></slot>
+        </ul></div>
+    `,
 
     relays: {
         items: '.items',
@@ -14,9 +16,8 @@ Machine.cog({
         tabs: '.classes # CLASSES'
     },
 
-
     chains: {
-          list: {url: 'BULMA list_item.js', config: 'props', source: 'items', clickTo: 'clickTo$'}
+          list: {url: 'BULMA list_item.js', config: 'props', source: 'items', clickTo: '~ clickTo$'}
     },
 
     toEither: function(msg){

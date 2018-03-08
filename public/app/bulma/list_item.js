@@ -3,17 +3,16 @@ Machine.cog({
 
     display: '<li name="item"><gear url="renderer" config="props"></gear></li>',
 
-    buses: [
-        'active * renderActive'
-    ],
-
     relays: {
         clickTo$: '.clickTo',
         activeFrom: '.activeFrom'
     },
 
     nodes: {
-        item: '@ click * preventDefault | .value, .toggle, activeFrom * toClickValue > clickTo$',
+        item: [
+            '@ click * preventDefault | .value, .toggle, activeFrom * toClickValue > clickTo$',
+            'active * toActiveClass # TO_CLASS'
+        ]
     },
 
     preventDefault: function(e){
@@ -23,14 +22,14 @@ Machine.cog({
 
     calcs: {
 
-        active: '~ .value, .toggle, activeFrom * isActive',
+        active: '.value, .toggle?, activeFrom * isActive',
         renderer: '.renderer * toRenderer'
 
     },
 
     toRenderer: function(renderer){
 
-        return renderer || './renderers/anchor.js';
+        return renderer || './items/anchor.js';
 
     },
 
@@ -54,12 +53,8 @@ Machine.cog({
 
     },
 
-    renderActive: function(active){
-
-        this.dom.item.toggleClasses({
-            'is-active': active
-        });
-
+    toActiveClass(active){
+        return active ? 'is-active' : '';
     },
 
     defaultClickTo(msg){

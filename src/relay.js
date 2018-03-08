@@ -1,7 +1,6 @@
 
 function Relay(cog, name, remote){
 
-
     this.cog = cog;
     this.name = name;
     this.remote = remote;
@@ -30,6 +29,14 @@ Relay.prototype.connect = function(remoteName){
         this.localData.write(remoteName.call(this.cog.script));
         // todo -- support {value: blah} syntax
     } else if (typeof remoteName === 'string'){
+
+        const tildaPos = remoteName.indexOf('~');
+        if(tildaPos >= 0){
+            remoteName = remoteName.substr(tildaPos + 1);
+            remoteName = remoteName.trim();
+        } else {
+            console.log('RELAY NO ~', remoteName);
+        }
 
         // remoteName must be data name at parent scope!
         const remoteData = this.cog.parent.scope.find(remoteName, true);

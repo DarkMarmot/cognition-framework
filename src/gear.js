@@ -70,6 +70,18 @@ Gear.prototype.createCog = function createCog(msg){
 
     const children = this.children;
     const aliasContext = this.aliasContext;
+
+    if(!msg){
+        if(children.length){
+            const oldCog = children[0];
+            const el = oldCog.getFirstElement(); //oldCog.elements[0]; // todo recurse first element for virtual cog
+            const slot = Placeholder.take();
+            el.parentNode.insertBefore(slot, el);
+            oldCog.destroy();
+        }
+        return;
+    }
+
     const url = aliasContext.resolveUrl(msg, this.root);
 
     if(children.length){
