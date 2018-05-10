@@ -32,26 +32,6 @@ function Gear(url, slot, parent, def, data){
 
 }
 
-// Gear.prototype.defineProps = PartBuilder.defineProps;
-// Gear.prototype.subscribeToParentSource = PartBuilder.subscribeToParentSource;
-// Gear.prototype.extendDefToConfig = PartBuilder.extendDefToConfig;
-// Gear.prototype.extendConfigAndSourceToProps = PartBuilder.extendConfigAndSourceToProps;
-
-// Gear.prototype.buildSource = function(){
-//
-//     const name = this.sourceName;
-//
-//     if(!name)
-//         return;
-//
-//     const localSource = this.source = this.scope.demand('source');
-//     const remoteSource = this.parent.scope.find(name, true);
-//
-//     this.scope.bus()
-//         .addSubscribe(name, remoteSource)
-//         .write(localSource);
-//
-// };
 
 Gear.prototype.killPlaceholder = function() {
 
