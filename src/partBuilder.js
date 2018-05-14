@@ -153,10 +153,14 @@ PartBuilder.buildStates = function buildStates(){
     const scope  = this.scope;
     const states = script.states;
 
-    for(const name in states){
+    for(const name in states) {
+        scope.demand(name);
+    }
 
-        const def = states[name];
+    for(const name in states) {
+
         const state = scope.demand(name);
+        const def = states[name];
 
         if(def.hasValue) {
 
@@ -168,6 +172,8 @@ PartBuilder.buildStates = function buildStates(){
         }
 
     }
+
+    // need 3 phase, create, then silent write, then public refresh
 
     for(const name in states){
 
